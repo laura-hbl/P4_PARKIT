@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 public class FareCalculatorHelper {
 
     public static double getCalculatedFare(Ticket ticket){
-        if( (ticket.getOutTime() == null || (ticket.getOutTime().isBefore(ticket.getInTime())))) {
-            throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
-        }
 
+        if (ticket.getOutTime() == null || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
+            throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime());
+        }
         LocalDateTime inTime = ticket.getInTime();
         LocalDateTime outTime = ticket.getOutTime();
         // Converting duration to hours.
