@@ -11,7 +11,9 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ParkingService {
 
@@ -58,7 +60,7 @@ public class ParkingService {
                 System.out.println("Generated Ticket and saved in DB");
                 System.out.println("Please park your vehicle in spot number: " + parkingSpot.getNumber());
                 System.out.println("Recorded in-time for vehicle number:" + vehicleRegNumber + " is: "
-                        + inTime);
+                        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             }
         } catch (Exception e) {
             logger.error("Unable to process incoming vehicle", e);
@@ -139,9 +141,10 @@ public class ParkingService {
 
                 // Release this parking space and mark it's availability as true
                 if (parkingSpotDAO.updateParking(parkingSpot)) {
-                    System.out.println("Please pay the parking fare: " + ticket.getPrice());
+                    DecimalFormat formatPrice = new DecimalFormat("0.00");
+                    System.out.println("Please pay the parking fare: " + formatPrice.format(ticket.getPrice()));
                     System.out.println("Recorded out-time for vehicle number: " + ticket.getVehicleRegNumber() + " is: "
-                            + ticket.getOutTime());
+                            + ticket.getOutTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 }
             } else {
                 System.out.println("Unable to update ticket information. Error occurred");
