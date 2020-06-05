@@ -34,6 +34,17 @@ public class FareCalculatorHelperTest {
     }
 
     @Test
+    public void givenAOneHourCarTicket_whenGetCalculatedFareWithDiscount_thenRateIncludesDiscount() {
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
+        ticket.setInTime(LocalDateTime.now().minusMinutes(60));
+        ticket.setOutTime(LocalDateTime.now());
+
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, Fare.DISCOUNT);
+
+        assertThat(calculateFare).isEqualTo(Fare.CAR_RATE_PER_HOUR - (Fare.DISCOUNT * Fare.CAR_RATE_PER_HOUR));
+    }
+
+    @Test
     public void givenAOneHourBikeTicket_whenGetCalculatedFare_thenFareIsEqualToBikeRatePerHour() {
         ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
         ticket.setInTime(LocalDateTime.now().minusMinutes(60));
@@ -42,6 +53,18 @@ public class FareCalculatorHelperTest {
         double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket);
 
         assertThat(calculateFare).isEqualTo(Fare.BIKE_RATE_PER_HOUR);
+    }
+
+    @Test
+    public void givenAOneHourBikeTicket_whenGetCalculatedFareWithDiscount_thenRateIncludesDiscount() {
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
+        ticket.setInTime(LocalDateTime.now().minusMinutes(60));
+        ticket.setOutTime(LocalDateTime.now());
+        ticket.setPrice(Fare.DISCOUNT);
+
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, Fare.DISCOUNT);
+
+        assertThat(calculateFare).isEqualTo(Fare.BIKE_RATE_PER_HOUR - (Fare.DISCOUNT * Fare.BIKE_RATE_PER_HOUR));
     }
 
     @Test
