@@ -1,4 +1,4 @@
-package com.parkit.parkingsystem;
+package com.parkit.parkingsystem.unit;
 
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
@@ -28,7 +28,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().minusMinutes(60));
         ticket.setOutTime(LocalDateTime.now());
 
-        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket);
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
 
         assertThat(calculateFare).isEqualTo(Fare.CAR_RATE_PER_HOUR);
     }
@@ -50,7 +50,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().minusMinutes(60));
         ticket.setOutTime(LocalDateTime.now());
 
-        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket);
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
 
         assertThat(calculateFare).isEqualTo(Fare.BIKE_RATE_PER_HOUR);
     }
@@ -73,7 +73,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().minusMinutes(45));
         ticket.setOutTime(LocalDateTime.now());
 
-        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket);
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
 
         assertThat(calculateFare).isEqualTo(0.75 * Fare.CAR_RATE_PER_HOUR);
     }
@@ -84,7 +84,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().minusMinutes(45));
         ticket.setOutTime(LocalDateTime.now());
 
-        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket);
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
 
         assertThat(calculateFare).isEqualTo(0.75 * Fare.BIKE_RATE_PER_HOUR);
     }
@@ -95,7 +95,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now());
         ticket.setOutTime(LocalDateTime.now().plusMinutes(1440));
 
-        double fare = FareCalculatorHelper.getCalculatedFare(ticket);
+        double fare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
 
         assertThat(fare).isEqualTo(24 * Fare.CAR_RATE_PER_HOUR);
     }
@@ -106,7 +106,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now());
         ticket.setOutTime(LocalDateTime.now().plusMinutes(1440));
 
-        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket);
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
 
         assertThat(calculateFare).isEqualTo(24 * Fare.BIKE_RATE_PER_HOUR);
     }
@@ -117,7 +117,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().minusMinutes(60));
         ticket.setOutTime(LocalDateTime.now());
 
-        assertThrows(NullPointerException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket));
+        assertThrows(NullPointerException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().minusMinutes(60));
         ticket.setOutTime(null);
 
-        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket));
+        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now());
         ticket.setOutTime(null);
 
-        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket));
+        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().plusMinutes(60));
         ticket.setOutTime(LocalDateTime.now());
 
-        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket));
+        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
 
     @Test
@@ -153,7 +153,7 @@ public class FareCalculatorHelperTest {
         ticket.setInTime(LocalDateTime.now().plusMinutes(60));
         ticket.setOutTime(LocalDateTime.now());
 
-        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket));
+        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
 
 }
