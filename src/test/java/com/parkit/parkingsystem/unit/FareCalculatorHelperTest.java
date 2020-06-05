@@ -89,6 +89,40 @@ public class FareCalculatorHelperTest {
         assertThat(calculateFare).isEqualTo(0.75 * Fare.BIKE_RATE_PER_HOUR);
     }
 
+    @ParameterizedTest
+    @EnumSource(value = ParkingType.class, names = {"CAR", "BIKE"})
+    public void givenALessThanHalfHourTicket_whenGetCalculatedFare_thenFareIsFree(ParkingType parkingType) {
+        ticket.setParkingSpot(new ParkingSpot(1, parkingType, false));
+        ticket.setInTime(LocalDateTime.now().minusMinutes(29));
+        ticket.setOutTime(LocalDateTime.now());
+
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
+
+        assertThat(calculateFare).isEqualTo(Fare.FREE_FARE);
+    }
+
+    @Test
+    public void givenAHalfHourCarTicket_whenGetCalculatedFare_thenFareIsHalfTheCarRatePerHour() {
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
+        ticket.setInTime(LocalDateTime.now().minusMinutes(30));
+        ticket.setOutTime(LocalDateTime.now());
+
+        double calculateFare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
+
+        assertThat(calculateFare).isEqualTo(0.5 * Fare.CAR_RATE_PER_HOUR);
+    }
+
+    @Test
+    public void givenAHalfHourBikeTicket_whenGetCalculatedFare_thenFareIsHalfTheBikeRatePerHour() {
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
+        ticket.setInTime(LocalDateTime.now().minusMinutes(30));
+        ticket.setOutTime(LocalDateTime.now());
+
+        double fare = FareCalculatorHelper.getCalculatedFare(ticket, 0);
+
+        assertThat(fare).isEqualTo(0.5 * Fare.BIKE_RATE_PER_HOUR);
+    }
+
     @Test
     public void givenAOneDayCarTicket_whenGetCalculatedFare_thenFareIs24TimesTheCarRatePerHour() {
         ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
