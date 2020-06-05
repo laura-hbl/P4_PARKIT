@@ -17,15 +17,18 @@ public class TicketDAO {
 
     private static final Logger logger = LogManager.getLogger("TicketDAO");
 
-    public DataBaseConfig dataBaseConfig = new DataBaseConfig();
+    public DataBaseConfig dataBaseConfig;
+
+    public TicketDAO(DataBaseConfig dataBaseConfig) {
+        this.dataBaseConfig = dataBaseConfig;
+    }
 
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
-            //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-            //ps.setInt(1,ticket.getId());
+            // PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
             ps.setInt(1,ticket.getParkingSpot().getId());
             ps.setString(2, ticket.getVehicleRegNumber());
             ps.setDouble(3, ticket.getPrice());
@@ -87,4 +90,26 @@ public class TicketDAO {
         }
         return false;
     }
+
+    public boolean isRecurringUser(String vehicleRegNumber) {
+        try (Connection con = dataBaseConfig.getConnection();
+             PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET_COUNT)) {
+            ps.setString(1, vehicleRegNumber);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                // If the count is greater than 1 it means there are more than 1 ticket associated with this user.
+                // If it is equal to one then the user has entered the parking for the first time, but has not yet exited.
+                if (rs.next() && rs.getInt(1) > 1) {
+                    return true;
+                } else {
+                    logger.info("No ticket found with this registration number");
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("Error checking ticket", ex);
+        }
+
+        return false;
+    }
+
 }

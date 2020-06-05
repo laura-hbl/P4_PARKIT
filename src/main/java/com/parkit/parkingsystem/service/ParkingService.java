@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem.service;
 
+import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -35,15 +36,24 @@ public class ParkingService {
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
                 parkingSpot.setAvailable(false);
-                parkingSpotDAO.updateParking(parkingSpot); //allot this parking space and mark it's availability as false
-                LocalDateTime inTime = LocalDateTime.now();
+
+                // Allot this parking space and mark it's availability as false
+                parkingSpotDAO.updateParking(parkingSpot);
+
                 Ticket ticket = new Ticket();
                 ticket.setParkingSpot(parkingSpot);
                 ticket.setVehicleRegNumber(vehicleRegNumber);
-                ticket.setPrice(0);
+                LocalDateTime inTime = LocalDateTime.now();
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
+                // Ticket is saved in DB with parkingSpot, parkingType, vehicleRegNumber, InTime and OutTime.
                 ticketDAO.saveTicket(ticket);
+
+                // The system checks whether the user has entered the parking previously.
+                if (ticketDAO.isRecurringUser(vehicleRegNumber)) {
+                    System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
+                }
+
                 System.out.println("Generated Ticket and saved in DB");
                 System.out.println("Please park your vehicle in spot number:"+parkingSpot.getId());
                 System.out.println("Recorded in-time for vehicle number:"+vehicleRegNumber+" is:"+inTime);
@@ -96,19 +106,33 @@ public class ParkingService {
         }
     }
 
+    private double getDiscount(String vehicleRegNumber) {
+        if (ticketDAO.isRecurringUser(vehicleRegNumber)) {
+            return Fare.DISCOUNT;
+        }
+
+        return 0;
+    }
+
     public void processExitingVehicle() {
         try{
             String vehicleRegNumber = getVehichleRegNumber();
+            // Retrieve the last ticket saved in Database associated with this registration number.
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             LocalDateTime outTime = LocalDateTime.now();
             ticket.setOutTime(outTime);
-            double fare = FareCalculatorHelper.getCalculatedFare(ticket);
+            // Users get a 5% discount when they use the parking garage regularly.
+            double discount = getDiscount(vehicleRegNumber);
+            double fare = FareCalculatorHelper.getCalculatedFare(ticket, discount);
 
             ticket.setPrice(fare);
 
+            // Ticket is updated in the Database with the fare generated and out-time.
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
+
+                // Release this parking space and mark it's availability as true.
                 parkingSpotDAO.updateParking(parkingSpot);
                 System.out.println("Please pay the parking fare:" + ticket.getPrice());
                 System.out.println("Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is:" + outTime);
