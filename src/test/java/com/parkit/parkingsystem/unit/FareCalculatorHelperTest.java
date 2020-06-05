@@ -7,6 +7,8 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.FareCalculatorHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.LocalDateTime;
 
@@ -154,40 +156,23 @@ public class FareCalculatorHelperTest {
         assertThrows(NullPointerException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
 
-    @Test
-    public void givenCarTicketWithNoOutTime_whenGetCalculatedFare_thenIllegalArgumentExceptionThrown() {
-        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
-        ticket.setInTime(LocalDateTime.now().minusMinutes(60));
-        ticket.setOutTime(null);
-
-        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
-    }
-
-    @Test
-    public void givenBikeTicketWithNoOutTime_whenGetCalculatedFare_thenIllegalArgumentExceptionThrown() {
-        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
+    @ParameterizedTest
+    @EnumSource(value = ParkingType.class, names = {"CAR", "BIKE"})
+    public void givenATicketWithNoOutTime_whenGetCalculatedFare_thenIllegalArgumentExceptionThrown(ParkingType parkingType) {
+        ticket.setParkingSpot(new ParkingSpot(1, parkingType, false));
         ticket.setInTime(LocalDateTime.now());
         ticket.setOutTime(null);
 
         assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
 
-    @Test
-    public void givenCarTicketWithFutureInTime_whenGetCalculatedFare_thenIllegalArgumentExceptionThrown() {
-        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
+    @ParameterizedTest
+    @EnumSource(value = ParkingType.class, names = {"CAR", "BIKE"})
+    public void givenATicketWithFutureInTime_whenGetCalculatedFare_thenIllegalArgumentExceptionThrown(ParkingType parkingType) {
+        ticket.setParkingSpot(new ParkingSpot(1, parkingType, false));
         ticket.setInTime(LocalDateTime.now().plusMinutes(60));
         ticket.setOutTime(LocalDateTime.now());
 
         assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
     }
-
-    @Test
-    public void givenBikeTicketWithFutureInTime_whenGetCalculatedFare_thenIllegalArgumentExceptionThrown() {
-        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
-        ticket.setInTime(LocalDateTime.now().plusMinutes(60));
-        ticket.setOutTime(LocalDateTime.now());
-
-        assertThrows(IllegalArgumentException.class, () -> FareCalculatorHelper.getCalculatedFare(ticket, 0));
-    }
-
 }
