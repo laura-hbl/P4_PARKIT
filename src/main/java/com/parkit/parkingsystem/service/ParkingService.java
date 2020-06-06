@@ -46,7 +46,8 @@ public class ParkingService {
                 Ticket ticket = new Ticket();
                 ticket.setParkingSpot(parkingSpot);
                 ticket.setVehicleRegNumber(vehicleRegNumber);
-                LocalDateTime inTime = LocalDateTime.now();
+                // MYSQL has problems with saving milliseconds in the database.
+                LocalDateTime inTime = LocalDateTime.now().minusSeconds(1);
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
                 // Ticket is saved in DB with parkingSpot, parkingType, vehicleRegNumber, InTime and OutTime.
