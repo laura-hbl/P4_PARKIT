@@ -4,6 +4,7 @@ import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import com.parkit.parkingsystem.util.ScannerWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +18,8 @@ public class InteractiveShell {
 
         boolean continueApp = true;
 
-        InputReaderUtil inputReaderUtil = new InputReaderUtil();
+        ScannerWrapper scannerWrapper = new ScannerWrapper();
+        InputReaderUtil inputReaderUtil = new InputReaderUtil(scannerWrapper);
         DataBaseConfig dataBaseConfig = new DataBaseConfig();
         TicketDAO ticketDAO = new TicketDAO(dataBaseConfig);
         ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO(dataBaseConfig);
