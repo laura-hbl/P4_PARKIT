@@ -1,6 +1,7 @@
 package com.parkit.parkingsystem.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Ticket {
     private int id;
@@ -9,6 +10,18 @@ public class Ticket {
     private double price;
     private LocalDateTime inTime;
     private LocalDateTime outTime;
+
+    public Ticket(int id, ParkingSpot parkingSpot, String vehicleRegNumber, double price, LocalDateTime inTime, LocalDateTime outTime) {
+        this.id = id;
+        this.parkingSpot = parkingSpot;
+        this.vehicleRegNumber = vehicleRegNumber;
+        this.price = price;
+        this.inTime = inTime;
+        this.outTime = outTime;
+    }
+
+    public Ticket() {
+    }
 
     public int getId() {
         return id;
@@ -56,5 +69,23 @@ public class Ticket {
 
     public void setOutTime(LocalDateTime outTime) {
         this.outTime = outTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return id == ticket.id &&
+                Double.compare(ticket.price, price) == 0 &&
+                parkingSpot.equals(ticket.parkingSpot) &&
+                vehicleRegNumber.equals(ticket.vehicleRegNumber) &&
+                inTime.equals(ticket.inTime) &&
+                Objects.equals(outTime, ticket.outTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, parkingSpot, vehicleRegNumber, price, inTime, outTime);
     }
 }
