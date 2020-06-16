@@ -3,89 +3,201 @@ package com.parkit.parkingsystem.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Permits the storage and retrieving values from the ticket
+ * table (prod database).
+ *
+ * @author Laura
+ */
 public class Ticket {
-    private int id;
-    private ParkingSpot parkingSpot;
-    private String vehicleRegNumber;
-    private double price;
-    private LocalDateTime inTime;
-    private LocalDateTime outTime;
 
-    public Ticket(int id, ParkingSpot parkingSpot, String vehicleRegNumber, double price, LocalDateTime inTime, LocalDateTime outTime) {
-        this.id = id;
-        this.parkingSpot = parkingSpot;
-        this.vehicleRegNumber = vehicleRegNumber;
-        this.price = price;
-        this.inTime = inTime;
-        this.outTime = outTime;
-    }
+  /**
+   * Represents the unique identifier of a ticket.
+   */
+  private int id;
 
-    public Ticket() {
-    }
+  /**
+   * The number of the parking spot allocated to the vehicle.
+   */
+  private ParkingSpot parkingSpot;
 
-    public int getId() {
-        return id;
-    }
+  /**
+   * Represents the user's vehicle registration number.
+   */
+  private String vehicleRegNumber;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  /**
+   * The price that will be paid by the user when exiting the parking.
+   */
+  private double price;
 
-    public ParkingSpot getParkingSpot() {
-        return parkingSpot;
-    }
+  /**
+   * The LocalDateTime at which a user enters to the parking.
+   */
+  private LocalDateTime inTime;
 
-    public void setParkingSpot(ParkingSpot parkingSpot) {
-        this.parkingSpot = parkingSpot;
-    }
+  /**
+   * The LocalDateTime at which a user leaves the parking.
+   */
+  private LocalDateTime outTime;
 
-    public String getVehicleRegNumber() {
-        return vehicleRegNumber;
-    }
+  /**
+   * Constructor of class Ticket.
+   * Initialize id, parkingSpot, vehicleRegNumber, price, inTime and OutTime.
+   *
+   * @param idTicket ticket id.
+   * @param spot parking spot.
+   * @param regNum vehicle registration number.
+   * @param fare price to pay when exit parking.
+   * @param comingTime time when incoming parking.
+   * @param exitTime time when exit parking.
+   */
+  public Ticket(final int idTicket, final ParkingSpot spot, final String regNum,
+                final double fare, final LocalDateTime comingTime,
+                final LocalDateTime exitTime) {
+    this.id = idTicket;
+    this.parkingSpot = spot;
+    this.vehicleRegNumber = regNum;
+    this.price = fare;
+    this.inTime = comingTime;
+    this.outTime = exitTime;
+  }
 
-    public void setVehicleRegNumber(String vehicleRegNumber) {
-        this.vehicleRegNumber = vehicleRegNumber;
-    }
+  /**
+   * Empty constructor of class Ticket.
+   */
+  public Ticket() {
+  }
 
-    public double getPrice() {
-        return price;
-    }
+  /**
+   * Getter of Ticket.id.
+   *
+   * @return ticket identifier
+   */
+  public int getId() {
+    return id;
+  }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+  /**
+   * Setter of Ticket.id.
+   *
+   * @param idTicket the ticket identifier to set on the ticket
+   */
+  public void setId(final int idTicket) {
+    this.id = idTicket;
+  }
 
-    public LocalDateTime getInTime() {
-        return inTime;
-    }
+  /**
+   * Getter of Ticket.parkingSpot.
+   *
+   * @return parkingSpot instance
+   */
+  public ParkingSpot getParkingSpot() {
+    return parkingSpot;
+  }
 
-    public void setInTime(LocalDateTime inTime) {
-        this.inTime = inTime;
-    }
+  /**
+   * Setter of Ticket.parkingSpot.
+   *
+   * @param spot instance of ParkingSpot to set on the ticket
+   */
+  public void setParkingSpot(final ParkingSpot spot) {
+    this.parkingSpot = spot;
+  }
 
-    public LocalDateTime getOutTime() {
-        return outTime;
-    }
+  /**
+   * Getter of Ticket.parkingSpot.
+   *
+   * @return the vehicle registration number associated
+   *     to a given ticket
+   */
+  public String getVehicleRegNumber() {
+    return vehicleRegNumber;
+  }
 
-    public void setOutTime(LocalDateTime outTime) {
-        this.outTime = outTime;
-    }
+  /**
+   * Setter of Ticket.parkingSpot.
+   *
+   * @param regNumber the vehicle registration number to set on the ticket
+   */
+  public void setVehicleRegNumber(final String regNumber) {
+    this.vehicleRegNumber = regNumber;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Ticket ticket = (Ticket) o;
-        return id == ticket.id &&
-                Double.compare(ticket.price, price) == 0 &&
-                parkingSpot.equals(ticket.parkingSpot) &&
-                vehicleRegNumber.equals(ticket.vehicleRegNumber) &&
-                inTime.equals(ticket.inTime) &&
-                Objects.equals(outTime, ticket.outTime);
-    }
+  /**
+   * Getter of Ticket.price.
+   *
+   * @return the price to pay when exit parking
+   */
+  public double getPrice() {
+    return price;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, parkingSpot, vehicleRegNumber, price, inTime, outTime);
+  /**
+   * Setter of Ticket.price.
+   *
+   * @param priceToPay The price to set on the ticket
+   */
+  public void setPrice(final double priceToPay) {
+    this.price = priceToPay;
+  }
+
+  /**
+   * Getter of Ticket.inTime.
+   *
+   * @return the LocalDateTime of parking entry
+   */
+  public LocalDateTime getInTime() {
+    return inTime;
+  }
+
+  /**
+   * Setter of Ticket.inTime.
+   *
+   * @param entryTime the entry LocalDateTime to set on the ticket
+   */
+  public void setInTime(final LocalDateTime entryTime) {
+    this.inTime = entryTime;
+  }
+
+  /**
+   * Getter of Ticket.outTime.
+   *
+   * @return the LocalDateTime of parking exit
+   */
+  public LocalDateTime getOutTime() {
+    return outTime;
+  }
+
+  /**
+   * Setter of Ticket.outTime.
+   *
+   * @param exitTime the exit LocalDateTime to set on the ticket
+   */
+  public void setOutTime(final LocalDateTime exitTime) {
+    this.outTime = exitTime;
+  }
+
+  @Override
+  public final boolean equals(final Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Ticket ticket = (Ticket) o;
+    return id == ticket.id
+      && Double.compare(ticket.price, price) == 0
+      && parkingSpot.equals(ticket.parkingSpot)
+      && vehicleRegNumber.equals(ticket.vehicleRegNumber)
+      && inTime.equals(ticket.inTime)
+      && Objects.equals(outTime, ticket.outTime);
+  }
+
+  @Override
+  public final int hashCode() {
+    return Objects.hash(id, parkingSpot, vehicleRegNumber, price,
+    inTime, outTime);
+  }
 }

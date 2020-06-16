@@ -3,37 +3,81 @@ package com.parkit.parkingsystem.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Reads int keyboard inputs and String registering number.
+ *
+ * @author Laura
+ */
 public class InputReaderUtil {
 
-    private final ScannerWrapper scannerWrapper;
-    private static final Logger logger = LogManager.getLogger("InputReaderUtil");
+  /**
+   * ScannerWrapper instance.
+   */
+  private final ScannerWrapper scannerWrapper;
 
-    public InputReaderUtil(ScannerWrapper scannerWrapper) {
-        this.scannerWrapper = scannerWrapper;
-    }
+  /**
+   * InputReaderUtil logger.
+   */
+  private static final Logger LOGGER = LogManager.getLogger("InputReaderUtil");
 
-    public int readSelection() {
-        int input = -1;
+  /**
+   * The maximum number to enter in the menu choice selection.
+   */
+  private static final int MAX_INPUT_SELECTION = 3;
 
-        try {
-            input = Integer.parseInt(scannerWrapper.nextLine());
-        } catch (Exception e) {
-            logger.error("Error while reading user input from Shell", e);
-        }
+  /**
+   * Maximum number of characters allocated for a licence plate.
+   */
+  private static final int MAX_CHAR_REG_NUMBER = 8;
 
+  /**
+   * Constructor of class InputReaderUtil, initialize scannerWrapper.
+   *
+   * @param scanner scannerWrapper instance.
+   */
+  public InputReaderUtil(final ScannerWrapper scanner) {
+    this.scannerWrapper = scanner;
+  }
+
+  /**
+   * Reads user input by calling ScannerWrapper's nextLine() method.
+   *
+   * @return the number provided by the user if the value is correct
+   *     or -1 if the value is invalid
+   */
+  public int readSelection() {
+    try {
+      int input = Integer.parseInt(scannerWrapper.nextLine());
+
+      if (input >= 1 && input <= MAX_INPUT_SELECTION) {
         return input;
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error while reading user input from Shell", e);
+      System.out.println("Error reading input. Please enter valid number "
+          + "for proceeding further");
     }
 
-    public String readVehicleRegistrationNumber() {
-        String vehicleRegNumber = scannerWrapper.nextLine();
+    return -1;
+  }
 
-        if (vehicleRegNumber == null || vehicleRegNumber.trim().length() == 0) {
-            logger.error("Error while reading user input from Shell");
-            System.out.println("Error reading input. Please enter a valid string for vehicle registration number");
-            throw new IllegalArgumentException("Invalid input provided");
-        }
+  /**
+   * Allows the user to enter his licence plate number.
+   * Reads user input by calling ScannerWrapper's nextLine() method.
+   *
+   * @return the vehicle reg number if the provided value is correct
+   */
+  public String readVehicleRegistrationNumber() {
+    String vehicleRegNumber = scannerWrapper.nextLine();
 
-        return vehicleRegNumber;
+    if (vehicleRegNumber == null || vehicleRegNumber.trim().length() == 0
+        || vehicleRegNumber.trim().length() > MAX_CHAR_REG_NUMBER) {
+      LOGGER.error("Error while reading user input from Shell");
+      System.out.println("Error reading input. Please enter a valid string"
+          + "for vehicle registration number");
+      throw new IllegalArgumentException("Invalid input provided");
     }
 
+    return vehicleRegNumber;
+  }
 }

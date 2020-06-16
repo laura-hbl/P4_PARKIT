@@ -4,10 +4,31 @@ import com.parkit.parkingsystem.service.InteractiveShell;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class App {
-    private static final Logger logger = LogManager.getLogger("App");
-    public static void main(String args[]){
-        logger.info("Initializing Parking System");
-        InteractiveShell.loadInterface();
-    }
+/**
+ * Launch Park'it Application.
+ *
+ * @author Laura
+ */
+public final class App {
+
+  /**
+   * App logger.
+   */
+  private static final Logger LOGGER = LogManager.getLogger("App");
+
+  /**
+   * Empty constructor of class App.
+   */
+  private App() {
+  }
+
+  /**
+   * Starts Park'it application.
+   *
+   * @param args no argument
+   */
+  public static void main(final String[] args) {
+    LOGGER.info("Initializing Parking System");
+    InteractiveShell.loadInterface();
+  }
 }
