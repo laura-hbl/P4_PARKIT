@@ -2,22 +2,20 @@ package com.parkit.parkingsystem.unit;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.dao.TicketDao;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,11 +23,11 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class TicketDAOTest {
+public class TicketDaoTest {
 
-    private static final String REG_NUMBER = "ABCDEF";
+    private static final String REG_NUMBER = "AB125XY";
 
-    private TicketDAO ticketDAO;
+    private TicketDao ticketDao = new TicketDao();
 
     @Mock
     private static DataBaseConfig dataBaseConfig;
@@ -45,7 +43,7 @@ public class TicketDAOTest {
     public void setUpPerTest() throws Exception {
         when(dataBaseConfig.getConnection()).thenReturn(connection);
         when(connection.prepareStatement(any(String.class))).thenReturn(preparedStatement);
-        ticketDAO = new TicketDAO(dataBaseConfig);
+        ticketDao.setDataBaseConfig(dataBaseConfig);
     }
 
     @Test
@@ -54,7 +52,7 @@ public class TicketDAOTest {
         Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(), null);
         when(preparedStatement.execute()).thenReturn(true);
 
-        boolean isTicketSaved = ticketDAO.saveTicket(ticket);
+        boolean isTicketSaved = ticketDao.saveTicket(ticket);
 
         InOrder inOrder = inOrder(preparedStatement);
         inOrder.verify(preparedStatement).setInt(1, ticket.getParkingSpot().getNumber());
@@ -72,7 +70,7 @@ public class TicketDAOTest {
         Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(),null);
         when(preparedStatement.execute()).thenReturn(false);
 
-        boolean isTicketSaved = ticketDAO.saveTicket(ticket);
+        boolean isTicketSaved = ticketDao.saveTicket(ticket);
 
         assertThat(isTicketSaved).isFalse();
     }
@@ -83,7 +81,7 @@ public class TicketDAOTest {
         Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 1.5, LocalDateTime.now(), LocalDateTime.now().plusMinutes(60));
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        boolean isTicketUpdated = ticketDAO.updateTicket(ticket);
+        boolean isTicketUpdated = ticketDao.updateTicket(ticket);
 
         InOrder inOrder = inOrder(preparedStatement);
         inOrder.verify(preparedStatement).setDouble(1, ticket.getPrice());
@@ -99,7 +97,7 @@ public class TicketDAOTest {
         Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 1.5, LocalDateTime.now(), LocalDateTime.now().plusMinutes(60));
         when(preparedStatement.executeUpdate()).thenReturn(0);
 
-        boolean isTicketUpdated = ticketDAO.updateTicket(ticket);
+        boolean isTicketUpdated = ticketDao.updateTicket(ticket);
 
         assertThat(isTicketUpdated).isFalse();
     }
@@ -110,7 +108,7 @@ public class TicketDAOTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt(1)).thenReturn(2);
 
-        boolean isRecurrentUser = ticketDAO.isRecurringUser(REG_NUMBER);
+        boolean isRecurrentUser = ticketDao.isRecurringUser(REG_NUMBER);
 
         verify(preparedStatement).setString(1, REG_NUMBER);
         verify(preparedStatement).executeQuery();
@@ -123,7 +121,7 @@ public class TicketDAOTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        boolean isRecurrentUser = ticketDAO.isRecurringUser(REG_NUMBER);
+        boolean isRecurrentUser = ticketDao.isRecurringUser(REG_NUMBER);
 
         assertThat(isRecurrentUser).isFalse();
     }
@@ -146,7 +144,7 @@ public class TicketDAOTest {
         when(resultSet.getTimestamp(eq(5))).thenReturn(Timestamp.valueOf(expectedTicket.getOutTime()));
         when(resultSet.getString(6)).thenReturn(expectedTicket.getParkingSpot().getParkingType().toString());
 
-        Ticket ticket = ticketDAO.getTicket(REG_NUMBER);
+        Ticket ticket = ticketDao.getTicket(REG_NUMBER);
 
         assertThat(expectedTicket).isEqualTo(ticket);
     }
@@ -156,7 +154,7 @@ public class TicketDAOTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        Ticket ticket = ticketDAO.getTicket(REG_NUMBER);
+        Ticket ticket = ticketDao.getTicket(REG_NUMBER);
 
         assertThat(ticket).isNull();
     }

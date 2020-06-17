@@ -2,7 +2,7 @@ package com.parkit.parkingsystem.unit;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.dao.ParkingSpotDAO;
+import com.parkit.parkingsystem.dao.ParkingSpotDao;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ParkingSpotDAOTest {
+public class ParkingSpotDaoTest {
 
-    private static ParkingSpotDAO parkingSpotDAO;
+    private static ParkingSpotDao parkingSpotDao = new ParkingSpotDao();
 
     @Mock
     private static DataBaseConfig dataBaseConfig;
@@ -38,7 +38,7 @@ public class ParkingSpotDAOTest {
     public void setUpPerTest() throws Exception {
         when(dataBaseConfig.getConnection()).thenReturn(connection);
         when(connection.prepareStatement(any(String.class))).thenReturn(preparedStatement);
-        parkingSpotDAO = new ParkingSpotDAO(dataBaseConfig);
+        parkingSpotDao.setDataBaseConfig(dataBaseConfig);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class ParkingSpotDAOTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt(1)).thenReturn(2);
 
-        int nextAvailableSpot = parkingSpotDAO.getNextAvailableSpot(ParkingType.CAR);
+        int nextAvailableSpot = parkingSpotDao.getNextAvailableSpot(ParkingType.CAR);
 
         verify(preparedStatement).setString(1, ParkingType.CAR.toString());
         verify(preparedStatement).executeQuery();
@@ -61,7 +61,7 @@ public class ParkingSpotDAOTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        int nextAvailableSpot = parkingSpotDAO.getNextAvailableSpot(ParkingType.CAR);
+        int nextAvailableSpot = parkingSpotDao.getNextAvailableSpot(ParkingType.CAR);
 
         assertThat(nextAvailableSpot).isEqualTo(-1);
     }
@@ -71,7 +71,7 @@ public class ParkingSpotDAOTest {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        boolean isParkingUpdated = parkingSpotDAO.updateParking(parkingSpot);
+        boolean isParkingUpdated = parkingSpotDao.updateParking(parkingSpot);
 
         InOrder inOrder = inOrder(preparedStatement);
         inOrder.verify(preparedStatement).setBoolean(1,parkingSpot.isAvailable());
@@ -85,7 +85,7 @@ public class ParkingSpotDAOTest {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
         when(preparedStatement.executeUpdate()).thenReturn(0);
 
-        boolean isParkingUpdated = parkingSpotDAO.updateParking(parkingSpot);
+        boolean isParkingUpdated = parkingSpotDao.updateParking(parkingSpot);
 
         assertThat(isParkingUpdated).isEqualTo(false);
     }
