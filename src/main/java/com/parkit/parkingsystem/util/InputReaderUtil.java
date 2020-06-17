@@ -73,7 +73,7 @@ public class InputReaderUtil {
     if (vehicleRegNumber == null || vehicleRegNumber.trim().length() == 0
         || vehicleRegNumber.trim().length() > MAX_CHAR_REG_NUMBER) {
       LOGGER.error("Error while reading user input from Shell");
-      System.out.println("Error reading input. Please enter a valid string"
+      System.out.println("Error reading input. Please enter a valid string "
           + "for vehicle registration number");
       throw new IllegalArgumentException("Invalid input provided");
     }
