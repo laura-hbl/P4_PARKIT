@@ -148,7 +148,7 @@ public class TicketDao {
 
       try (ResultSet rs = ps.executeQuery()) {
         /* If the count is greater than 1 it means there are more than 1 ticket
-           associated witt this user.
+           associated with this user.
            If it is equal to one then the user has entered the parking for the
            first time, but has not yet exited. */
         if (rs.next() && rs.getInt(DataBaseParameters.ONE) > 1) {
