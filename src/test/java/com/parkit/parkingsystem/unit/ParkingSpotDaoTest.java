@@ -51,10 +51,11 @@ public class ParkingSpotDaoTest {
 
         int nextAvailableSpot = parkingSpotDao.getNextAvailableSpot(ParkingType.CAR);
 
-        verify(preparedStatement).setString(DataBaseParameters.ONE, ParkingType.CAR.toString());
-        verify(preparedStatement).executeQuery();
-        verify(resultSet).next();
-        verify(resultSet).getInt(DataBaseParameters.ONE);
+        InOrder inOrder = inOrder(preparedStatement, resultSet);
+        inOrder.verify(preparedStatement).setString(DataBaseParameters.ONE, ParkingType.CAR.toString());
+        inOrder.verify(preparedStatement).executeQuery();
+        inOrder.verify(resultSet).next();
+        inOrder.verify(resultSet).getInt(DataBaseParameters.ONE);
         assertThat(nextAvailableSpot).isEqualTo(2);
     }
 
@@ -80,8 +81,8 @@ public class ParkingSpotDaoTest {
         boolean isParkingUpdated = parkingSpotDao.updateParking(parkingSpot);
 
         InOrder inOrder = inOrder(preparedStatement);
-        inOrder.verify(preparedStatement).setBoolean(1,parkingSpot.isAvailable());
-        inOrder.verify(preparedStatement).setInt(2, parkingSpot.getNumber());
+        inOrder.verify(preparedStatement).setBoolean(DataBaseParameters.ONE,parkingSpot.isAvailable());
+        inOrder.verify(preparedStatement).setInt(DataBaseParameters.TWO, parkingSpot.getNumber());
         inOrder.verify(preparedStatement).executeUpdate();
         assertThat(isParkingUpdated).isEqualTo(true);
     }
