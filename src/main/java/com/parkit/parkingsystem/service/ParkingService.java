@@ -33,12 +33,12 @@ public class ParkingService {
   private final InputReaderUtil inputReaderUtil;
 
   /**
-   * ParkingSpotDAO object.
+   * ParkingSpotDao object.
    */
   private final ParkingSpotDao parkingSpotDao;
 
   /**
-   * TicketDAO object.
+   * TicketDao object.
    */
   private final TicketDao ticketDao;
 
