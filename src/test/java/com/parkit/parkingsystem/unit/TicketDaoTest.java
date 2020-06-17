@@ -1,6 +1,7 @@
 package com.parkit.parkingsystem.unit;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
+import com.parkit.parkingsystem.constants.DataBaseParameters;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.TicketDao;
 import com.parkit.parkingsystem.model.ParkingSpot;
@@ -11,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -47,27 +50,31 @@ public class TicketDaoTest {
     }
 
     @Test
+    @Tag("SaveTicket")
+    @DisplayName("Given a ticket, when saveTicket, then ticket should be saved correctly")
     public void givenATicket_whenSaveTicket_thenTicketIsSaved() throws Exception {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
-        Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(), null);
+        Ticket ticket = new Ticket(1, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(), null);
         when(preparedStatement.execute()).thenReturn(true);
 
         boolean isTicketSaved = ticketDao.saveTicket(ticket);
 
         InOrder inOrder = inOrder(preparedStatement);
-        inOrder.verify(preparedStatement).setInt(1, ticket.getParkingSpot().getNumber());
-        inOrder.verify(preparedStatement).setString(2, ticket.getVehicleRegNumber());
-        inOrder.verify(preparedStatement).setDouble(3, ticket.getPrice());
-        inOrder.verify(preparedStatement).setObject(4, ticket.getInTime());
-        inOrder.verify(preparedStatement).setObject(5, ticket.getOutTime());
+        inOrder.verify(preparedStatement).setInt(DataBaseParameters.ONE, ticket.getParkingSpot().getNumber());
+        inOrder.verify(preparedStatement).setString(DataBaseParameters.TWO, ticket.getVehicleRegNumber());
+        inOrder.verify(preparedStatement).setDouble(DataBaseParameters.THREE, ticket.getPrice());
+        inOrder.verify(preparedStatement).setObject(DataBaseParameters.FOUR, ticket.getInTime());
+        inOrder.verify(preparedStatement).setObject(DataBaseParameters.FIVE, ticket.getOutTime());
         inOrder.verify(preparedStatement).execute();
         assertThat(isTicketSaved).isTrue();
     }
 
     @Test
+    @Tag("SaveTicket")
+    @DisplayName("Given a ticket, when saveTicket is not executed, then ticket should not be saved")
     public void givenATicket_whenSaveTicketNotExecuted_thenTicketIsNotSaved() throws Exception {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
-        Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(),null);
+        Ticket ticket = new Ticket(1, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(),null);
         when(preparedStatement.execute()).thenReturn(false);
 
         boolean isTicketSaved = ticketDao.saveTicket(ticket);
@@ -76,25 +83,29 @@ public class TicketDaoTest {
     }
 
     @Test
+    @Tag("UpdateTicket")
+    @DisplayName("Given a ticket, when updateTicket, then ticket should be updated correctly")
     public void givenATicket_whenUpdateTicket_thenTicketIsUpdated() throws Exception {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-        Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 1.5, LocalDateTime.now(), LocalDateTime.now().plusMinutes(60));
+        Ticket ticket = new Ticket(1, parkingSpot, REG_NUMBER, 1.5, LocalDateTime.now(), LocalDateTime.now().plusMinutes(60));
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
         boolean isTicketUpdated = ticketDao.updateTicket(ticket);
 
         InOrder inOrder = inOrder(preparedStatement);
-        inOrder.verify(preparedStatement).setDouble(1, ticket.getPrice());
-        inOrder.verify(preparedStatement).setObject(2, ticket.getOutTime());
-        inOrder.verify(preparedStatement).setInt(3, ticket.getId());
+        inOrder.verify(preparedStatement).setDouble(DataBaseParameters.ONE, ticket.getPrice());
+        inOrder.verify(preparedStatement).setObject(DataBaseParameters.TWO, ticket.getOutTime());
+        inOrder.verify(preparedStatement).setInt(DataBaseParameters.THREE, ticket.getId());
         inOrder.verify(preparedStatement).executeUpdate();
         assertThat(isTicketUpdated).isTrue();
     }
 
     @Test
+    @Tag("UpdateTicket")
+    @DisplayName("Given a ticket, when updateTicket is not executed, then ticket should not be updated")
     public void givenATicket_whenUpdateTicketNotExecuted_thenTicketIsNotUpdated() throws Exception {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-        Ticket ticket = new Ticket(0, parkingSpot, REG_NUMBER, 1.5, LocalDateTime.now(), LocalDateTime.now().plusMinutes(60));
+        Ticket ticket = new Ticket(1, parkingSpot, REG_NUMBER, 1.5, LocalDateTime.now(), LocalDateTime.now().plusMinutes(60));
         when(preparedStatement.executeUpdate()).thenReturn(0);
 
         boolean isTicketUpdated = ticketDao.updateTicket(ticket);
@@ -103,20 +114,39 @@ public class TicketDaoTest {
     }
 
     @Test
-    public void givenARegistrationNumber_whenGetIsRecurringUser_thenReturnTrue() throws Exception {
+    @Tag("IsRecurringUser")
+    @DisplayName("Given a licence number with more than one ticket associated with it, then isRecurringUser should return true")
+    public void givenARegistrationNumberAssociatedWithMoreThanOneTicket_whenGetIsRecurringUser_thenReturnTrue() throws Exception {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
-        when(resultSet.getInt(1)).thenReturn(2);
+        when(resultSet.getInt(DataBaseParameters.ONE)).thenReturn(2);
 
         boolean isRecurrentUser = ticketDao.isRecurringUser(REG_NUMBER);
 
-        verify(preparedStatement).setString(1, REG_NUMBER);
-        verify(preparedStatement).executeQuery();
-        verify(resultSet).next();
+        InOrder inOrder = inOrder(preparedStatement, resultSet);
+        inOrder.verify(preparedStatement).setString(DataBaseParameters.ONE, REG_NUMBER);
+        inOrder.verify(preparedStatement).executeQuery();
+        inOrder.verify(resultSet).next();
         assertThat(isRecurrentUser).isTrue();
     }
 
     @Test
+    @Tag("IsRecurringUser")
+    @DisplayName("Given a licence number with only one ticket associated with it, then isRecurringUser should return false")
+    public void givenARegistrationAssociatedWithOnlyOneTicket_whenGetIsRecurringUser_thenReturnFalse() throws Exception {
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getInt(DataBaseParameters.ONE)).thenReturn(1);
+
+        boolean isRecurrentUser = ticketDao.isRecurringUser(REG_NUMBER);
+
+        assertThat(isRecurrentUser).isFalse();
+    }
+
+
+    @Test
+    @Tag("IsRecurringUser")
+    @DisplayName("Given a licence number, when no resultSet, then isRecurringUser should return false")
     public void givenARegistrationNumber_whenGetIsRecurringUser_thenReturnFalse() throws Exception {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
@@ -127,6 +157,8 @@ public class TicketDaoTest {
     }
 
     @Test
+    @Tag("GetTicket")
+    @DisplayName("Given an expected ticket, when getTicket, then ticket should match expected ticket")
     public void givenARegistrationNumber_whenGetTicket_ThenReturnExpectedTicket() throws Exception {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
         Ticket expectedTicket = new Ticket(1, parkingSpot, REG_NUMBER, 1.5, LocalDateTime.now(), LocalDateTime.now().plusMinutes(60));
@@ -134,15 +166,15 @@ public class TicketDaoTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
         // Mockito requires 0 here to allow for when with different params values
-        when(resultSet.getInt(eq(0))).thenReturn(expectedTicket.getParkingSpot().getNumber());
-        when(resultSet.getInt(eq(1))).thenReturn(expectedTicket.getParkingSpot().getNumber());
-        when(resultSet.getInt(eq(2))).thenReturn(expectedTicket.getId());
-        when(resultSet.getDouble(3)).thenReturn(expectedTicket.getPrice());
+        when(resultSet.getInt(eq(DataBaseParameters.ZERO))).thenReturn(expectedTicket.getParkingSpot().getNumber());
+        when(resultSet.getInt(eq(DataBaseParameters.ONE))).thenReturn(expectedTicket.getParkingSpot().getNumber());
+        when(resultSet.getInt(eq(DataBaseParameters.TWO))).thenReturn(expectedTicket.getId());
+        when(resultSet.getDouble(DataBaseParameters.THREE)).thenReturn(expectedTicket.getPrice());
         // Mockito requires 0 here to allow for when with different params values
-        when(resultSet.getTimestamp(eq(0))).thenReturn(Timestamp.valueOf(expectedTicket.getInTime()));
-        when(resultSet.getTimestamp(eq(4))).thenReturn(Timestamp.valueOf(expectedTicket.getInTime()));
-        when(resultSet.getTimestamp(eq(5))).thenReturn(Timestamp.valueOf(expectedTicket.getOutTime()));
-        when(resultSet.getString(6)).thenReturn(expectedTicket.getParkingSpot().getParkingType().toString());
+        when(resultSet.getTimestamp(eq(DataBaseParameters.ZERO))).thenReturn(Timestamp.valueOf(expectedTicket.getInTime()));
+        when(resultSet.getTimestamp(eq(DataBaseParameters.FOUR))).thenReturn(Timestamp.valueOf(expectedTicket.getInTime()));
+        when(resultSet.getTimestamp(eq(DataBaseParameters.FIVE))).thenReturn(Timestamp.valueOf(expectedTicket.getOutTime()));
+        when(resultSet.getString(DataBaseParameters.SIX)).thenReturn(expectedTicket.getParkingSpot().getParkingType().toString());
 
         Ticket ticket = ticketDao.getTicket(REG_NUMBER);
 
@@ -150,6 +182,8 @@ public class TicketDaoTest {
     }
 
     @Test
+    @Tag("GetTicket")
+    @DisplayName("Given a licence number, when no resultSet, then getTicket should return null")
     public void givenARegistrationNumber_whenGetTicketWithNullResult_thenReturnNull() throws Exception {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
