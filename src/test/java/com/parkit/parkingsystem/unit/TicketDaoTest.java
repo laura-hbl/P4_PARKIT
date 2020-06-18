@@ -74,7 +74,7 @@ public class TicketDaoTest {
     @DisplayName("Given a ticket, when saveTicket is not executed, then ticket should not be saved")
     public void givenATicket_whenSaveTicketNotExecuted_thenTicketIsNotSaved() throws Exception {
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
-        Ticket ticket = new Ticket(1, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(),null);
+        Ticket ticket = new Ticket(1, parkingSpot, REG_NUMBER, 0, LocalDateTime.now(), null);
         when(preparedStatement.execute()).thenReturn(false);
 
         boolean isTicketSaved = ticketDao.saveTicket(ticket);

@@ -81,7 +81,7 @@ public class ParkingSpotDaoTest {
         boolean isParkingUpdated = parkingSpotDao.updateParking(parkingSpot);
 
         InOrder inOrder = inOrder(preparedStatement);
-        inOrder.verify(preparedStatement).setBoolean(DataBaseParameters.ONE,parkingSpot.isAvailable());
+        inOrder.verify(preparedStatement).setBoolean(DataBaseParameters.ONE, parkingSpot.isAvailable());
         inOrder.verify(preparedStatement).setInt(DataBaseParameters.TWO, parkingSpot.getNumber());
         inOrder.verify(preparedStatement).executeUpdate();
         assertThat(isParkingUpdated).isEqualTo(true);
