@@ -47,9 +47,9 @@ public class ParkingService {
    * Constructor of class ParkingService.
    * Initialize inputReader, parkingSpotDao and ticketDao.
    *
-   * @param inputReader InputReaderUtil object
+   * @param inputReader    InputReaderUtil object
    * @param daoParkingSpot ParkingSpotDao object
-   * @param daoTicket TicketDao object
+   * @param daoTicket      TicketDao object
    */
   public ParkingService(final InputReaderUtil inputReader, final ParkingSpotDao
       daoParkingSpot, final TicketDao daoTicket) {
@@ -89,14 +89,14 @@ public class ParkingService {
         /* The system checks whether the user has entered the parking
            previously. */
         if (ticketDao.isRecurringUser(vehicleRegNumber)) {
-          System.out.println("Welcome back! As a recurring user of our"
+          LOGGER.info("Welcome back! As a recurring user of our"
               + " parking lot, you'll benefit from a 5% discount.");
         }
 
-        System.out.println("Generated Ticket and saved in DB");
-        System.out.println("Please park your vehicle in spot number: "
+        LOGGER.info("Generated Ticket and saved in DB");
+        LOGGER.info("Please park your vehicle in spot number: "
             + parkingSpot.getNumber());
-        System.out.println("Recorded in-time for vehicle number:"
+        LOGGER.info("Recorded in-time for vehicle number:"
             + vehicleRegNumber + " is: " + inTime.format(DateTimeFormatter
             .ofPattern("yyyy-MM-dd HH:mm:ss")));
       }
@@ -112,9 +112,9 @@ public class ParkingService {
    * @return the provided ParkingType enum
    */
   private ParkingType getVehicleType() {
-    System.out.println("Please select vehicle type from menu");
-    System.out.println("1 CAR");
-    System.out.println("2 BIKE");
+    LOGGER.info("Please select vehicle type from menu");
+    LOGGER.info("1 CAR");
+    LOGGER.info("2 BIKE");
     int input = inputReaderUtil.readSelection();
 
     switch (input) {
@@ -126,7 +126,7 @@ public class ParkingService {
         return ParkingType.BIKE;
 
       default:
-        System.out.println("Incorrect input provided. Please enter "
+        LOGGER.error("Incorrect input provided. Please enter "
             + "valid number");
         throw new IllegalArgumentException("Entered input is invalid");
     }
@@ -169,8 +169,8 @@ public class ParkingService {
    * @return the licence plate number provided
    */
   private String getVehicleRegNumber() {
-    System.out.println("Please type the vehicle registration number"
-        + " and press enter key");
+    LOGGER.info("Please type the vehicle registration number"
+         + " and press enter key");
     return inputReaderUtil.readVehicleRegistrationNumber();
   }
 
@@ -216,15 +216,15 @@ public class ParkingService {
         // Release this parking space and mark it's availability as true
         if (parkingSpotDao.updateParking(parkingSpot)) {
           DecimalFormat formatPrice = new DecimalFormat("0.00");
-          System.out.println("Please pay the parking fare: "
+          LOGGER.info("Please pay the parking fare: "
               + formatPrice.format(ticket.getPrice()));
-          System.out.println("Recorded out-time for vehicle number: "
+          LOGGER.info("Recorded out-time for vehicle number: "
               + ticket.getVehicleRegNumber() + " is: "
               + ticket.getOutTime().format(DateTimeFormatter.ofPattern(
               "yyyy-MM-dd HH:mm:ss")));
         }
       } else {
-        System.out.println("Unable to update ticket information."
+        LOGGER.error("Unable to update ticket information."
             + " Error occurred");
       }
     } catch (Exception e) {

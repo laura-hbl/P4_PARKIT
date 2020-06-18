@@ -31,8 +31,7 @@ public final class InteractiveShell {
    * shuts down the application.
    */
   public static void loadInterface() {
-    LOGGER.info("App initialized!!!");
-    System.out.println("Welcome to Parking System!");
+    LOGGER.info("Welcome to Parking System!");
 
     boolean continueApp = true;
 
@@ -61,12 +60,12 @@ public final class InteractiveShell {
           break;
 
         case exitingSystem:
-          System.out.println("Exiting from the system!");
+          LOGGER.info("Exiting from the system!");
           continueApp = false;
           break;
 
         default:
-          System.out.println("Unsupported option. Please enter a number "
+          LOGGER.info("Unsupported option. Please enter a number "
               + "corresponding to the provided menu");
       }
     }
@@ -76,11 +75,11 @@ public final class InteractiveShell {
    * Displays the app main menu.
    */
   private static void loadMenu() {
-    System.out.println("Please select an option. Simply enter the number to "
+    LOGGER.info("Please select an option. Simply enter the number to "
         + "choose an action");
-    System.out.println("1 New Vehicle Entering - Allocate Parking Space");
-    System.out.println("2 Vehicle Exiting - Generate Ticket Price");
-    System.out.println("3 Shutdown System");
+    LOGGER.info("1 New Vehicle Entering - Allocate Parking Space");
+    LOGGER.info("2 Vehicle Exiting - Generate Ticket Price");
+    LOGGER.info("3 Shutdown System");
   }
 }
 
