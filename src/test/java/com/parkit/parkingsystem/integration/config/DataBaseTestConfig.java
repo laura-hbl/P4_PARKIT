@@ -11,9 +11,9 @@ public class DataBaseTestConfig extends DataBaseConfig {
     private static final Logger logger = LogManager.getLogger("DataBaseTestConfig");
 
     public Connection getConnection() throws ClassNotFoundException, SQLException {
-        logger.trace("Create DB connection");
+        logger.debug("Create DB connection");
         Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/test?serverTimezone=Europe/Paris", "root", "rootroot");
+        "jdbc:mysql://localhost:3306/test?serverTimezone=Europe/Paris", "root", "rootroot");
     }
 }
