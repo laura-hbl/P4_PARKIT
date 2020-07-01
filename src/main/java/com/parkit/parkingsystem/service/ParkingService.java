@@ -6,7 +6,7 @@ import com.parkit.parkingsystem.dao.ParkingSpotDao;
 import com.parkit.parkingsystem.dao.TicketDao;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.util.FareCalculatorHelper;
+import com.parkit.parkingsystem.util.FareCalculatorUtil;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -204,7 +204,7 @@ public class ParkingService {
       ticket.setOutTime(outTime);
       // Users get a 5% discount when they use the parking garage regularly.
       double discount = getDiscount(vehicleRegNumber);
-      double fare = FareCalculatorHelper.getCalculatedFare(ticket, discount);
+      double fare = FareCalculatorUtil.getCalculatedFare(ticket, discount);
 
       ticket.setPrice(fare);
 

@@ -10,19 +10,19 @@ import java.time.LocalDateTime;
  *
  * @author Laura
  */
-public final class FareCalculatorHelper {
+public final class FareCalculatorUtil {
 
   /**
-   * Empty constructor of class FareCalculatorHelper.
+   * Empty constructor of class FareCalculatorUtil.
    */
-  private FareCalculatorHelper() {
+  private FareCalculatorUtil() {
   }
 
   /**
    * Calculates the fare based on parking time, vehicle type and discount rate.
    *
    * @param ticket the ticket from which calculation is done.
-   * @param discount discount based on if it's a recurrent user or not.
+   * @param discount discount based on if it's a recurrent user or new user.
    * @return the price to pay after calculation.
    */
   public static double getCalculatedFare(final Ticket ticket, final double
@@ -44,8 +44,8 @@ public final class FareCalculatorHelper {
     // Allow users to park for free when they stay less than 30 minutes.
     if (duration < Fare.FREE_PARKING_TIME) {
       return 0;
-      /* The system calculates the fare according to the parking time, the type
-      of vehicle and discount. */
+      /* The system calculates the fare depending on parking time, the type
+      of vehicle and discount if recurrent user. */
     } else {
       switch (ticket.getParkingSpot().getParkingType()) {
 
