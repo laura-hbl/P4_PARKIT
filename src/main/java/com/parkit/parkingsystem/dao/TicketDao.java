@@ -154,7 +154,7 @@ public class TicketDao {
         if (rs.next() && rs.getInt(DataBaseParameters.ONE) > 1) {
           return true;
         } else {
-          LOGGER.info("No ticket found with this registration number");
+          LOGGER.debug("No ticket found with this registration number");
         }
       }
     } catch (Exception ex) {
