@@ -24,6 +24,7 @@ public class ParkingDataBaseIT {
     private static ParkingSpotDao parkingSpotDao = new ParkingSpotDao();
     private static TicketDao ticketDao = new TicketDao();
     private static DataBasePrepareService dataBasePrepareService;
+    private static ParkingService parkingService;
 
     @Mock
     private static InputReaderUtil inputReaderUtil;
@@ -37,9 +38,10 @@ public class ParkingDataBaseIT {
 
     @BeforeEach
     public void setUpPerTest() {
-        dataBasePrepareService.clearDataBaseEntries();
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(REG_NUMBER);
+        dataBasePrepareService.clearDataBaseEntries();
+        parkingService = new ParkingService(inputReaderUtil, parkingSpotDao, ticketDao);
     }
 
     @AfterAll
@@ -50,7 +52,6 @@ public class ParkingDataBaseIT {
     @Tag("Incoming")
     @DisplayName("Checks that a ticket is actually saved in DB and Parking table is updated with availability")
     public void givenARegistrationNumber_whenProcessIncomingVehicle_thenNewTicketIsCreatedAndParkingUpdated() {
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDao, ticketDao);
         parkingService.processIncomingVehicle();
 
         int nextAvailableSpot = parkingSpotDao.getNextAvailableSpot(ParkingType.CAR);
@@ -65,9 +66,9 @@ public class ParkingDataBaseIT {
     @Test
     @Tag("IncomingAndExiting")
     @DisplayName("Checks that the fare generated and out time are populated correctly in the DB")
-    public void givenARegistrationNumber_whenProcessExitingVehicle_thenFareIsGeneratedAndOutTimePopulated() {
-        givenARegistrationNumber_whenProcessIncomingVehicle_thenNewTicketIsCreatedAndParkingUpdated();
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDao, ticketDao);
+    public void givenARegistrationNumber_whenProcessExitingVehicle_thenFareIsGeneratedAndOutTimePopulated() throws InterruptedException{
+        parkingService.processIncomingVehicle();
+        Thread.sleep(500);
         parkingService.processExitingVehicle();
 
         Ticket ticket = ticketDao.getTicket(REG_NUMBER);
@@ -83,9 +84,12 @@ public class ParkingDataBaseIT {
     @Test
     @Tag("RegularUserExiting")
     @DisplayName("Checks that a user is considered as recurrent user when entering the parking for the second time")
-    public void givenARegistrationNumberOfRecurringUser_whenGetIsRecurringUser_thenReturnTrue() {
-        givenARegistrationNumber_whenProcessExitingVehicle_thenFareIsGeneratedAndOutTimePopulated();
-        givenARegistrationNumber_whenProcessIncomingVehicle_thenNewTicketIsCreatedAndParkingUpdated();
+    public void givenARegistrationNumberOfRecurringUser_whenGetIsRecurringUser_thenReturnTrue() throws InterruptedException {
+        parkingService.processIncomingVehicle();
+        Thread.sleep(500);
+        parkingService.processExitingVehicle();
+        Thread.sleep(500);
+        parkingService.processIncomingVehicle();
 
         boolean isRecurringUser = ticketDao.isRecurringUser(REG_NUMBER);
 
