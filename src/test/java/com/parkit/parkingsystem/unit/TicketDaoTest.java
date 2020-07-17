@@ -115,11 +115,11 @@ public class TicketDaoTest {
 
     @Test
     @Tag("IsRecurringUser")
-    @DisplayName("Given a licence number with more than one ticket associated with it, then isRecurringUser should return true")
-    public void givenARegistrationNumberAssociatedWithMoreThanOneTicket_whenGetIsRecurringUser_thenReturnTrue() throws Exception {
+    @DisplayName("Given a licence number with one ticket associated with it, then isRecurringUser should return true")
+    public void givenARegistrationNumberAssociatedWithOneTicket_whenGetIsRecurringUser_thenReturnTrue() throws Exception {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
-        when(resultSet.getInt(DataBaseParameters.ONE)).thenReturn(2);
+        when(resultSet.getInt(DataBaseParameters.ONE)).thenReturn(1);
 
         boolean isRecurrentUser = ticketDao.isRecurringUser(REG_NUMBER);
 
@@ -133,8 +133,8 @@ public class TicketDaoTest {
 
     @Test
     @Tag("IsRecurringUser")
-    @DisplayName("Given a licence number with only one ticket associated with it, then isRecurringUser should return false")
-    public void givenARegistrationAssociatedWithOnlyOneTicket_whenGetIsRecurringUser_thenReturnFalse() throws Exception {
+    @DisplayName("Given a licence number with 0 ticket associated with it, then isRecurringUser should return false")
+    public void givenARegistrationAssociatedWithNoTicket_whenGetIsRecurringUser_thenReturnFalse() throws Exception {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt(DataBaseParameters.ONE)).thenReturn(0);
