@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Laura
  */
-public class TicketDao {
+public class  TicketDao {
 
   /**
    * TicketDao logger.
@@ -147,11 +147,11 @@ public class TicketDao {
       ps.setString(DataBaseParameters.ONE, vehicleRegNumber);
 
       try (ResultSet rs = ps.executeQuery()) {
-        /* If the count is greater than 1 it means there are more than 1 ticket
-           associated with this user.
-           If it is equal to one then the user has entered the parking for the
+        /* If the count is equal or greater than 1 it means the user had
+           already used the parking before.
+           If it is equal to 0 then the user has entered the parking for the
            first time, but has not yet exited. */
-        if (rs.next() && rs.getInt(DataBaseParameters.ONE) > 1) {
+        if (rs.next() && rs.getInt(DataBaseParameters.ONE) >= 1) {
           return true;
         } else {
           LOGGER.debug("No ticket found with this registration number");

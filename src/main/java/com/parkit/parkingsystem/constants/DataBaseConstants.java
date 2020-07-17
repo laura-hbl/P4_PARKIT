@@ -44,12 +44,12 @@ public final class DataBaseConstants {
   public static final String GET_TICKET = "select t.PARKING_NUMBER, t.ID,"
       + " t.PRICE, t.IN_TIME, t.OUT_TIME, p.TYPE from ticket t,parking p where "
       + "p.parking_number = t.parking_number and t.VEHICLE_REG_NUMBER=? order "
-      + " by t.OUT_TIME  limit 1";
+      + " by t.OUT_TIME limit 1";
 
   /**
    * SQL query to count ticket with the same registration number in database.
    */
   public static final String GET_TICKET_COUNT = "select count(t.ID) from "
       + "ticket t,parking p where p.PARKING_NUMBER = t.PARKING_NUMBER and "
-      + "t.VEHICLE_REG_NUMBER=?";
+      + "t.VEHICLE_REG_NUMBER=? and OUT_TIME is not null";
 }

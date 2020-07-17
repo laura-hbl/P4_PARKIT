@@ -127,6 +127,7 @@ public class TicketDaoTest {
         inOrder.verify(preparedStatement).setString(DataBaseParameters.ONE, REG_NUMBER);
         inOrder.verify(preparedStatement).executeQuery();
         inOrder.verify(resultSet).next();
+        inOrder.verify(resultSet).getInt(DataBaseParameters.ONE);
         assertThat(isRecurrentUser).isTrue();
     }
 
@@ -136,7 +137,7 @@ public class TicketDaoTest {
     public void givenARegistrationAssociatedWithOnlyOneTicket_whenGetIsRecurringUser_thenReturnFalse() throws Exception {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
-        when(resultSet.getInt(DataBaseParameters.ONE)).thenReturn(1);
+        when(resultSet.getInt(DataBaseParameters.ONE)).thenReturn(0);
 
         boolean isRecurrentUser = ticketDao.isRecurringUser(REG_NUMBER);
 
